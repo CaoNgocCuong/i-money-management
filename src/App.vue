@@ -15,7 +15,6 @@ export default {
   setup() {
     const route = useRoute();
 
-    console.log(route);
     return {
       layout: computed(() => (route.meta.layout || DEFAULT_LAYOUT) + "-layout"),
     };
