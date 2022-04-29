@@ -12,6 +12,7 @@
               class="px-4 py-3 rounded-lg border border-gray-100 mt-1 outline-none"
               placeholder="email..."
               autocomplete="username"
+              v-model="username"
             />
           </label>
         </div>
@@ -24,15 +25,27 @@
               class="px-4 py-3 rounded-lg border border-gray-100 mt-1 outline-none"
               placeholder="IMoney..."
               autocomplete="current-password"
+              v-model="password"
             />
           </label>
         </div>
+        <div v-show="error" class="error text-left mt-4 text-red">
+          <span>{{ error }}</span>
+        </div>
         <div class="row">
           <button
+            v-if="!isPending"
             type="submit"
             class="py-3 text-center w-full bg-primary text-white font-bold rounded-lg"
           >
             Sign Up
+          </button>
+          <button
+            v-else
+            type="button"
+            class="py-3 text-center w-full bg-gray-800 cursor-not-allowed text-white font-bold rounded-lg"
+          >
+            Loading...
           </button>
         </div>
       </form>
@@ -53,10 +66,32 @@
 </template>
 
 <script>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+import { useSignIn } from "@/composables/useSignIn";
+
 export default {
+  name: "Login",
   setup() {
+    const { error, isPending, signIn } = useSignIn();
+    const router = useRouter();
+
+    const username = ref("");
+    const password = ref("");
+
+    async function onSubmit() {
+      await signIn(username.value, password.value);
+
+      if (!error.value) router.push({ name: "Home", params: {} });
+    }
+
     return {
-      onsubmit,
+      username,
+      password,
+      onSubmit,
+      error,
+      isPending,
     };
   },
 };
