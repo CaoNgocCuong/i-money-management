@@ -7,11 +7,18 @@ import "./assets/styles/tailwind.css";
 import "./assets/styles/global.css";
 
 import { registerGlobalComponents } from "@/utils/import";
+import { projectAuth } from "@/configs/firebase";
 
-const app = createApp(App);
+let app;
 
-registerGlobalComponents(app);
+projectAuth.onAuthStateChanged(() => {
+  if (!app) {
+    app = createApp(App);
 
-app.use(router);
+    registerGlobalComponents(app);
 
-app.mount("#app");
+    app.use(router);
+
+    app.mount("#app");
+  }
+});
