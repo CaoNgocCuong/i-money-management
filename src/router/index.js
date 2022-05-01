@@ -13,11 +13,12 @@ const routes = [
     path: "/",
     name: "Home",
     meta: {
-      text: "Hey, Cao Ngọc Cường",
       leading: true,
+      icon: "t2ico-notification",
       isShowFooter: true,
     },
     component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
+    beforeEnter: requiredAuth,
   },
   {
     path: "/register",
@@ -42,6 +43,7 @@ const routes = [
     name: "Profile",
     meta: {
       text: "My Profile",
+      icon: "t2ico-setting",
       leading: false,
       isShowFooter: true,
     },
@@ -60,11 +62,13 @@ const routes = [
     name: "Report",
     meta: {
       text: "My Report",
+      icon: "t2ico-filter",
       leading: false,
       isShowFooter: true,
     },
     component: () =>
       import(/* webpackChunkName: "report" */ "@/views/Report.vue"),
+    beforeEnter: requiredAuth,
   },
   {
     path: "/budget",
@@ -72,10 +76,12 @@ const routes = [
     meta: {
       text: "My Budget",
       leading: false,
+      icon: "t2ico-wallet",
       isShowFooter: true,
     },
     component: () =>
       import(/* webpackChunkName: "budget" */ "@/views/Budget.vue"),
+    beforeEnter: requiredAuth,
   },
   {
     path: "/new-transaction",
@@ -89,6 +95,18 @@ const routes = [
       import(
         /* webpackChunkName: "transaction" */ "@/views/NewTransaction.vue"
       ),
+    beforeEnter: requiredAuth,
+  },
+  {
+    path: "/categories",
+    name: "Categories",
+    meta: {
+      text: "Categories",
+      leading: false,
+      isShowFooter: true,
+    },
+    component: () =>
+      import(/* webpackChunkName: "categories" */ "@/views/Category.vue"),
   },
 ];
 

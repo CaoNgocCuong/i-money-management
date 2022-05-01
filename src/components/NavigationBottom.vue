@@ -1,12 +1,12 @@
 <template>
-  <footer
-    id="footer"
-    class="fixed bottom-0 left-0 w-full bg-white pt-4 p-b-safe-4"
-  >
+  <footer id="footer" class="fixed bottom-0 w-full bg-white pt-4 p-b-safe-4">
     <div class="container mx-auto px-8 h-full">
       <ul class="flex items-center h-full justify-between">
         <li v-for="navItem in navItems" :key="navItem.nameRoute">
-          <router-link :to="{ name: navItem.nameRoute, params: {} }">
+          <router-link
+            class="inline-block px-2 py-1"
+            :to="{ name: navItem.nameRoute, params: {} }"
+          >
             <i class="t2ico text-2xl" :class="navItem.icon"></i>
           </router-link>
         </li>
@@ -43,6 +43,15 @@ export default {
 };
 </script>
 <style scoped>
+footer#footer {
+  max-width: 425px;
+  border-color: #eeededf2;
+  border-style: solid;
+  border-right-width: 1px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
 footer#footer > div[data-circle] {
   width: 60px;
   height: 30px;

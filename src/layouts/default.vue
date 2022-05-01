@@ -1,10 +1,10 @@
 <template>
-  <NavigationHeader />
+  <NavigationHeader @onBackRoute="handleBackRoute" />
   <slot />
   <NavigationBottom v-if="meta.isShowFooter" />
 </template>
 <script>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { computed } from "vue";
 
 import NavigationBottom from "@/components/NavigationBottom.vue";
@@ -17,9 +17,15 @@ export default {
   },
   setup() {
     const route = useRoute();
+    const router = useRouter();
+
+    function handleBackRoute() {
+      router.push({ name: "Home", params: {} });
+    }
 
     return {
       meta: computed(() => route.meta),
+      handleBackRoute,
     };
   },
 };

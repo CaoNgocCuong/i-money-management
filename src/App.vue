@@ -22,4 +22,14 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="css">
+#app {
+  @apply bg-dark-light;
+  max-width: 425px;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  border: 1px solid #eeededf2;
+  border-radius: 8px;
+}
+</style>

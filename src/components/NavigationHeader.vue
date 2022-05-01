@@ -14,12 +14,21 @@
               class="w-full h-auto object-cover"
             />
           </div>
-          <h1 class="font-bold text-xl ml-2 text-dark">{{ meta.text }}</h1>
+          <h1 class="font-bold text-xl ml-2 text-dark">
+            {{ meta.text ? meta.text : user ? `Hey, ${user.displayName}` : "" }}
+          </h1>
         </div>
         <div class="flex">
           <ul>
             <li>
-              <i class="t2ico t2ico-notification text-2xl"></i>
+              <i class="t2ico text-2xl" :class="meta.icon" v-if="meta.icon"></i>
+              <button
+                v-else
+                class="flex items-center text-dark text-lg font-semibold"
+                @click="onBackRoute"
+              >
+                Back
+              </button>
             </li>
           </ul>
         </div>
@@ -31,13 +40,24 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 
+import { useUser } from "@/composables/useUser";
+
 export default {
   name: "Navigation Header",
-  setup() {
+  setup(props, { emit }) {
     const route = useRoute();
+    const { getUser } = useUser();
+
+    const { user } = getUser();
+
+    function onBackRoute() {
+      emit("onBackRoute");
+    }
 
     return {
+      user,
       meta: computed(() => route.meta),
+      onBackRoute,
     };
   },
 };

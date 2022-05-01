@@ -5,15 +5,15 @@ export const PROFILE_OPTIONS = [
     name: "My Wallet",
     icon: "t2ico-wallet",
     route: {
-      name: "Home",
+      name: "Budget",
       params: {},
     },
   },
   {
-    name: "Tools",
-    icon: "t2ico-ticket-star",
+    name: "Categories",
+    icon: "t2ico-category",
     route: {
-      name: "Home",
+      name: "Categories",
       params: {},
     },
   },

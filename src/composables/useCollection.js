@@ -6,6 +6,7 @@ function useCollection(name) {
 
   async function addRecord(record) {
     error.value = null;
+
     try {
       const response = await projectFireStore.collection(name).add(record);
 
@@ -16,7 +17,26 @@ function useCollection(name) {
     }
   }
 
-  return { error, addRecord };
+  async function getRecords() {
+    error.value = null;
+
+    try {
+      const response = await projectFireStore.collection(name).get();
+
+      const data = response.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id };
+      });
+
+      console.log("data: ", data);
+
+      return data;
+    } catch (err) {
+      console.log(err);
+      error.value = err.message;
+    }
+  }
+
+  return { error, addRecord, getRecords };
 }
 
 export default useCollection;
