@@ -15,6 +15,7 @@ const routes = [
     meta: {
       text: "Hey, Cao Ngọc Cường",
       leading: true,
+      isShowFooter: true,
     },
     component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
   },
@@ -42,6 +43,7 @@ const routes = [
     meta: {
       text: "My Profile",
       leading: false,
+      isShowFooter: true,
     },
     component: () =>
       import(/* webpackChunkName: "profile" */ "@/views/Profile.vue"),
@@ -59,6 +61,7 @@ const routes = [
     meta: {
       text: "My Report",
       leading: false,
+      isShowFooter: true,
     },
     component: () =>
       import(/* webpackChunkName: "report" */ "@/views/Report.vue"),
@@ -69,6 +72,7 @@ const routes = [
     meta: {
       text: "My Budget",
       leading: false,
+      isShowFooter: true,
     },
     component: () =>
       import(/* webpackChunkName: "budget" */ "@/views/Budget.vue"),
@@ -79,6 +83,7 @@ const routes = [
     meta: {
       text: "Add Transaction",
       leading: false,
+      isShowFooter: false,
     },
     component: () =>
       import(

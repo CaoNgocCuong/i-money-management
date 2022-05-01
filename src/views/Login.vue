@@ -38,7 +38,7 @@
             type="submit"
             class="py-3 text-center w-full bg-primary text-white font-bold rounded-lg"
           >
-            Sign Up
+            Sign In
           </button>
           <button
             v-else
@@ -57,7 +57,7 @@
           ><router-link
             :to="{ name: 'Register', params: {} }"
             class="text-primary font-bold"
-            >Sign In</router-link
+            >Sign Up</router-link
           ></span
         >
       </div>

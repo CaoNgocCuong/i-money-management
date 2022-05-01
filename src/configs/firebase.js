@@ -3,13 +3,13 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAJVzbP_2P6QW6jHBnQwfu3McR5CqTZK9Y",
-  authDomain: "i-money-6c340.firebaseapp.com",
-  projectId: "i-money-6c340",
-  storageBucket: "i-money-6c340.appspot.com",
-  messagingSenderId: "526095001509",
-  appId: "1:526095001509:web:c744079cbe5d2a3bd9aa4c",
-  measurementId: "G-DL3ZP3J75F",
+  apiKey: "AIzaSyAZqXPks8dVXyNYHFcX1KB1Egb2inZzEEI",
+  authDomain: "i-money-3c818.firebaseapp.com",
+  projectId: "i-money-3c818",
+  storageBucket: "i-money-3c818.appspot.com",
+  messagingSenderId: "447461888555",
+  appId: "1:447461888555:web:6d5026048ba38c23bad06e",
+  measurementId: "G-ZPL3QYK800",
 };
 
 firebase.initializeApp(firebaseConfig);
