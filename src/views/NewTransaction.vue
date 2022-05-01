@@ -101,10 +101,6 @@
       </button>
     </div>
 
-    <button type="submit" class="w-full text-white p-4 mx-auto bg-sky-400">
-      Testing submit form
-    </button>
-
     <template v-if="isMoreDetails">
       <!-- Start: Advanced Form  -->
       <div class="row mt-8">
@@ -125,6 +121,7 @@
                     type="text"
                     placeholder="Type a location..."
                     id="location"
+                    v-model="location"
                   />
                 </div>
               </label>
@@ -142,6 +139,7 @@
                     type="text"
                     placeholder="With person..."
                     id="person"
+                    v-model="person"
                   />
                 </div>
               </label>
@@ -177,6 +175,14 @@
         <div class="text-red text-center py-3">{{ errorFile }}</div>
       </div>
     </template>
+    <div class="w-full my-10 text-center">
+      <button
+        type="submit"
+        class="w-32 h-auto text-white p-2 bg-sky-400 rounded-lg text-xl"
+      >
+        <i class="t2ico t2ico-plus text-3xl"></i>
+      </button>
+    </div>
   </form>
 </template>
 <script>
@@ -184,18 +190,22 @@ import { ref } from "vue";
 
 import { useUser } from "@/composables/useUser";
 import useCollection from "@/composables/useCollection";
+import useStorage from "@/composables/useStorage";
 
 export default {
   name: "New Transaction",
   setup() {
     const { getUser } = useUser();
     const { error, addRecord } = useCollection("transactions");
+    const { url, uploadFile } = useStorage("transactions");
 
     const isMoreDetails = ref(false);
     const total = ref(0);
     const category = ref("");
     const note = ref("");
     const time = ref(new Date());
+    const location = ref("");
+    const person = ref("");
     const file = ref(null);
     const errorFile = ref(null);
 
@@ -214,18 +224,20 @@ export default {
     async function onSubmit() {
       const { user } = getUser();
 
+      if (file.value) await uploadFile(file.value);
+
       const transaction = {
         total: parseInt(total.value),
         category: category.value,
         note: note.value,
         time: time.value,
+        location: location.value,
+        person: person.value,
+        image: url.value,
         userId: user.value.uid,
       };
 
       await addRecord(transaction);
-
-      console.log(error);
-      console.log("Created");
     }
 
     return {
@@ -233,10 +245,13 @@ export default {
       category,
       note,
       time,
+      location,
+      person,
       errorFile,
       isMoreDetails,
       onChangeFile,
       onSubmit,
+      error,
     };
   },
 };
