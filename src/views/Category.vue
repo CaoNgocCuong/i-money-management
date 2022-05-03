@@ -28,6 +28,7 @@
       <div v-if="error" class="text-red text-center text-lg">{{ error }}</div>
       <div class="bg-white rounded-lg p-3 mt-3">
         <button
+          v-if="!isPending"
           type="submit"
           class="flex items-center text-primary font-semibold text-lg"
         >
@@ -35,6 +36,13 @@
             class="t2ico t2ico-plus flex items-center justify-center w-8 h-8 text-xl p-2 mr-4 bg-primary text-white rounded-full"
           ></i>
           Add new category
+        </button>
+        <button
+          v-else
+          type="submit"
+          class="w-full p-2 rounded-lg text-dark-light bg-gray-500 font-semibold text-lg cursor-not-allowed text-center"
+        >
+          Loading...
         </button>
       </div>
     </form>
@@ -51,7 +59,8 @@ export default {
     const title = ref("");
     const categories = ref([]);
 
-    const { error, addRecord, getRecords } = useCollection("categories");
+    const { error, isPending, addRecord, getRecords } =
+      useCollection("categories");
 
     async function getCategories() {
       categories.value = await getRecords();
@@ -73,6 +82,7 @@ export default {
       title,
       error,
       categories,
+      isPending,
       onSubmit,
     };
   },

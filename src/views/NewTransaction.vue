@@ -34,13 +34,21 @@
                 ></span>
               </div>
               <div class="flex-1 border-b border-gray-100 py-3">
-                <input
-                  class="text-xl text-dark w-full outline-none"
-                  type="text"
-                  placeholder="Select a category"
+                <select
                   id="category"
+                  class="text-lg text-dark w-full outline-none"
                   v-model="category"
-                />
+                  v-if="categories"
+                >
+                  <option value="" disabled>Choose a category</option>
+                  <option
+                    :value="cate.id"
+                    v-for="cate in categories"
+                    :key="cate.id"
+                  >
+                    {{ cate.name }}
+                  </option>
+                </select>
               </div>
             </label>
           </div>
@@ -72,7 +80,12 @@
                 ></span>
               </div>
               <div class="flex-1 border-gray-100 border-b py-3">
-                <div class="text-dark w-full">{{ new Date() }}</div>
+                <div class="text-dark w-full">
+                  <date-picker
+                    v-model="date"
+                    class="w-full text-dark outline-none"
+                  ></date-picker>
+                </div>
               </div>
             </label>
           </div>
@@ -177,10 +190,18 @@
     </template>
     <div class="w-full my-10 text-center">
       <button
+        v-if="!isPending"
         type="submit"
         class="w-32 h-auto text-white p-2 bg-sky-400 rounded-lg text-xl"
       >
         <i class="t2ico t2ico-plus text-3xl"></i>
+      </button>
+      <button
+        v-else
+        type="submit"
+        class="w-32 h-auto text-white p-4 bg-gray-500 rounded-lg text-xl cursor-not-allowed"
+      >
+        Loading...
       </button>
     </div>
   </form>
@@ -191,23 +212,35 @@ import { ref } from "vue";
 import { useUser } from "@/composables/useUser";
 import useCollection from "@/composables/useCollection";
 import useStorage from "@/composables/useStorage";
+import DatePicker from "vue3-datepicker";
 
 export default {
   name: "New Transaction",
+  components: {
+    DatePicker,
+  },
   setup() {
     const { getUser } = useUser();
-    const { error, addRecord } = useCollection("transactions");
+    const { error, isPending, addRecord } = useCollection("transactions");
+    const { getRecords } = useCollection("categories");
     const { url, uploadFile } = useStorage("transactions");
 
     const isMoreDetails = ref(false);
     const total = ref(0);
     const category = ref("");
+    const categories = ref([]);
     const note = ref("");
-    const time = ref(new Date());
     const location = ref("");
     const person = ref("");
     const file = ref(null);
     const errorFile = ref(null);
+    const date = ref(new Date());
+
+    async function getCategories() {
+      categories.value = await getRecords();
+    }
+
+    getCategories();
 
     function onChangeFile(event) {
       const selected = event.target.files[0];
@@ -228,14 +261,16 @@ export default {
 
       const transaction = {
         total: parseInt(total.value),
-        category: category.value,
+        cateId: category.value,
         note: note.value,
-        time: time.value,
+        time: date.value,
         location: location.value,
         person: person.value,
         image: url.value,
         userId: user.value.uid,
       };
+
+      console.log(transaction);
 
       await addRecord(transaction);
     }
@@ -243,15 +278,17 @@ export default {
     return {
       total,
       category,
+      categories,
       note,
-      time,
+      date,
       location,
       person,
       errorFile,
       isMoreDetails,
+      error,
+      isPending,
       onChangeFile,
       onSubmit,
-      error,
     };
   },
 };
