@@ -8,7 +8,7 @@
             class="w-10 h-10 overflow-hidden rounded-full"
           >
             <img
-              src="https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien.jpg"
+              :src="user.photoURL"
               alt="User's profile avatar"
               size="sm"
               class="w-full h-auto object-cover"

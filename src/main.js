@@ -19,6 +19,14 @@ projectAuth.onAuthStateChanged(() => {
     registerGlobalComponents(app);
 
     app.config.globalProperties.$moment = moment;
+    app.config.globalProperties.$filter = {
+      formatNumber(number) {
+        return Intl.NumberFormat("vi-VI", {
+          style: "currency",
+          currency: "VND",
+        }).format(number);
+      },
+    };
 
     app.use(router);
 

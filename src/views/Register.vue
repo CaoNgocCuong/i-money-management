@@ -41,6 +41,20 @@
             />
           </label>
         </div>
+        <div class="row">
+          <label for="avatar" class="flex flex-col">
+            <span class="font-semibold">Avatar</span>
+            <input
+              type="file"
+              @change="handleChangeFile"
+              id="avatar"
+              class="px-4 py-3 rounded-lg border border-gray-100 mt-1 outline-none"
+            />
+          </label>
+          <div v-show="errorFile" class="error text-left mt-4 text-red">
+            <span>{{ errorFile }}</span>
+          </div>
+        </div>
         <div v-show="error" class="error text-left mt-4 text-red">
           <span>{{ error }}</span>
         </div>
@@ -82,20 +96,40 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 import { useSignUp } from "@/composables/useSignUp";
+import useStorage from "@/composables/useStorage";
 
 export default {
   name: "Register",
   setup() {
     const router = useRouter();
 
+    const { url, uploadFile } = useStorage("avatar");
+    const { isPending, error, signUp } = useSignUp();
+
     const fullName = ref("");
     const password = ref("");
     const email = ref("");
+    const file = ref(null);
+    const errorFile = ref("");
 
-    const { isPending, error, signUp } = useSignUp();
+    function handleChangeFile(event) {
+      const selected = event.target.files[0];
+      const typesFile = ["image/png", "image/jpg", "image/jpeg"];
+
+      if (selected && typesFile.includes(selected.type)) {
+        file.value = selected;
+      } else {
+        file.value = null;
+        errorFile.value = "Please choose a file have type PNG, JPG or JPEG!!!";
+      }
+    }
 
     const onSubmit = async () => {
-      await signUp(email.value, password.value, fullName.value);
+      if (file.value) await uploadFile(file.value);
+
+      console.log({ file, url });
+
+      await signUp(email.value, password.value, fullName.value, url.value);
 
       if (!error.value) router.push({ name: "Home", params: {} });
     };
@@ -104,9 +138,12 @@ export default {
       fullName,
       password,
       email,
+      file,
+      errorFile,
       isPending,
       error,
       onSubmit,
+      handleChangeFile,
     };
   },
 };

@@ -3,10 +3,10 @@
   <div class="row" v-if="user">
     <div class="container mx-auto p-8">
       <div class="text-center">
-        <div class="w-24 h-25 rounded-full overflow-hidden mx-auto">
+        <div class="w-24 h-24 rounded-full overflow-hidden mx-auto shadow-lg">
           <img
             class="w-full h-auto object-cover"
-            src="https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien.jpg"
+            :src="user.photoURL"
             size="xs"
             alt="User's Profile Avatar"
           />

@@ -25,6 +25,7 @@ export default {
 <style lang="css">
 #app {
   @apply bg-dark-light;
+  position: relative;
   max-width: 425px;
   width: 100%;
   height: 100%;

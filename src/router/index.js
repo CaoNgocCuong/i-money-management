@@ -24,6 +24,7 @@ const routes = [
     path: "/register",
     name: "Register",
     meta: {
+      text: "Register",
       layout: "auth",
     },
     component: () =>
@@ -33,6 +34,7 @@ const routes = [
     path: "/login",
     name: "Login",
     meta: {
+      text: "Login",
       layout: "auth",
     },
     component: () =>
@@ -54,6 +56,9 @@ const routes = [
   {
     path: "/logout",
     name: "LogOut",
+    meta: {
+      text: "Logout",
+    },
     component: () =>
       import(/* webpackChunkName: "logout" */ "@/views/Logout.vue"),
   },
@@ -113,6 +118,11 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  document.title = `${to.meta.text} | I-Money`;
+  next();
 });
 
 export default router;
