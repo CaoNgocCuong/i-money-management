@@ -9,15 +9,15 @@
         <ul class="flex items-center mt-4 flex-nowrap overflow-x-scroll py-4">
           <li>
             <span
-              @click="cateId = ''"
-              class="inline-block whitespace-nowrap px-4 py-2 bg-white text-gray-500 font-semibold text-lg rounded-lg cursor-pointer"
+              @click="handleActiveCate($event, '')"
+              class="cate active inline-block whitespace-nowrap px-4 py-2 bg-white text-gray-500 font-semibold text-lg rounded-lg cursor-pointer"
               >All</span
             >
           </li>
           <li v-for="cate in categories" :key="cate.id">
             <span
-              @click="cateId = cate.id"
-              class="inline-block whitespace-nowrap px-4 py-2 bg-white text-gray-500 font-semibold text-lg rounded-lg cursor-pointer"
+              @click="handleActiveCate($event, cate.id)"
+              class="cate inline-block whitespace-nowrap px-4 py-2 bg-white text-gray-500 font-semibold text-lg rounded-lg cursor-pointer"
               >{{ cate.name }}</span
             >
           </li>
@@ -107,12 +107,24 @@ export default {
 
     getCategories();
 
+    function handleActiveCate(event, cateIdParam) {
+      cateId.value = cateIdParam;
+      const cateListEle = document.querySelectorAll(".categories .cate");
+
+      cateListEle.forEach((cate) => {
+        cate.classList.remove("active");
+      });
+
+      event.target.classList.add("active");
+    }
+
     return {
       error,
       cateId,
       categories,
       isLoading,
       transactionsFiltered,
+      handleActiveCate,
     };
   },
 };
@@ -121,6 +133,11 @@ export default {
 <style scoped>
 .categories ul li:not(:last-child) {
   margin-right: 8px;
+}
+
+.categories ul li span.cate.active {
+  background-color: rgb(0, 18, 255);
+  color: rgb(235, 235, 235);
 }
 
 .over-text {

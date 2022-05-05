@@ -54,10 +54,8 @@
           </div>
           <div class="row">
             <label for="note" class="flex items-center">
-              <div
-                class="flex flex-none items-center w-10 text-right leading-10 mr-4"
-              >
-                <span class="flex-none w-10 mr-4"
+              <div class="flex-none w-10 mr-4">
+                <span class="flex items-center justify-end text-dark"
                   ><i class="t2ico t2ico-document text-2xl"></i
                 ></span>
               </div>
@@ -254,6 +252,15 @@ export default {
       }
     }
 
+    function resetForm() {
+      total.value = "";
+      note.value = "";
+      category.value = "";
+      date.value = new Date();
+      location.value = "";
+      person.value = "";
+    }
+
     async function onSubmit() {
       const { user } = getUser();
 
@@ -270,9 +277,9 @@ export default {
         userId: user.value.uid,
       };
 
-      console.log(transaction);
-
       await addRecord(transaction);
+
+      resetForm();
     }
 
     return {
