@@ -8,9 +8,10 @@
         alt="money gif"
       />
     </div>
-
+    <Loading v-if="!isLoading" />
     <!-- Start: Table All Wallet -->
     <div
+      v-else
       class="table-wallet border w-full border-collapse bg-white rounded-lg text-dark font-semibold overflow-hidden shadow-lg"
     >
       <div class="flex items-center justify-between px-4 bg-primary text-white">
@@ -53,14 +54,11 @@
         <div
           v-for="(wallet, index) in wallets"
           :key="index"
-          @click="
-            walletType = wallet.walletType;
-            amount = wallet.amount;
-          "
+          @click="setWallet(wallet)"
           class="flex items-center p-4 justify-between cursor-pointer hover:bg-slate-300"
         >
           <div>{{ wallet.walletType }}</div>
-          <div>{{ wallet.amount }}</div>
+          <div>{{ $filter.formatNumber(wallet.amount) }}</div>
         </div>
       </div>
       <div class="flex items-center justify-end px-4 text-primary">
@@ -80,12 +78,12 @@
             /></svg
           >Total:
         </div>
-        <div>{{ total }}</div>
+        <div>{{ $filter.formatNumber(total) }}</div>
       </div>
     </div>
 
     <!-- Start: Form Add/Edit Wallet -->
-    <form @submit.prevent="handleSubmit" class="min-h-[400px] mb-28">
+    <form class="min-h-[400px] mb-28">
       <div class="row">
         <h3 class="mt-4 p-4 font-semibold text-xl text-primary text-center">
           Actions Budget
@@ -121,36 +119,60 @@
       </div>
       <div class="row">
         <button
-          v-if="!isPending"
-          type="submit"
-          class="w-full mt-2 p-3 bg-primary text-lg text-white font-bold rounded-lg hover:opacity-90"
+          v-if="!isUpdate"
+          @click="handleCreateWallet"
+          class="flex items-center justify-center w-full mt-2 p-3 bg-primary text-lg text-white font-bold rounded-lg hover:opacity-90"
         >
-          Submit
+          <i class="t2ico t2ico-plus mr-1 text-2xl"></i> Create
         </button>
         <button
           v-else
-          type="submit"
-          class="w-full mt-2 p-3 bg-gray-500 text-lg text-white font-bold rounded-lg cursor-not-allowed"
+          @click="handleUpdateWallet"
+          class="flex items-center justify-center w-full mt-2 p-3 leading-8 bg-primary text-lg text-white font-bold rounded-lg hover:opacity-90"
         >
-          Loading...
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 mr-1"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"
+            />
+            <path
+              fill-rule="evenodd"
+              d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          Update
         </button>
       </div>
     </form>
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
+
 import { useUser } from "@/composables/useUser";
 import useCollection from "@/composables/useCollection";
+import Loading from "@/components/Loading.vue";
+
 export default {
   name: "Budget",
+  components: {
+    Loading,
+  },
   setup() {
-    const { error, isPending, addRecord, getRecords } =
+    const { error, addRecord, getRecords, updateRecord } =
       useCollection("wallets");
     const { getUser } = useUser();
     const { user } = getUser();
 
+    const isLoading = ref(false);
     const walletType = ref("");
+    const isUpdate = ref(false);
+    const walletId = ref("");
     const amount = ref(0);
     const wallets = ref([]);
     const total = ref(0);
@@ -166,11 +188,23 @@ export default {
 
         return wallet.userId === user.value.uid;
       });
+
+      isLoading.value = true;
     };
 
     walletGetList();
 
-    async function handleSubmit() {
+    function setWallet(wallet) {
+      walletType.value = wallet.walletType;
+      walletId.value = wallet.id;
+      amount.value = wallet.amount;
+
+      isUpdate.value = true;
+    }
+
+    async function handleCreateWallet() {
+      isLoading.value = false;
+
       const dataWallet = {
         walletType: walletType.value,
         amount: amount.value,
@@ -186,14 +220,43 @@ export default {
       walletGetList();
     }
 
+    async function handleUpdateWallet(event) {
+      event.preventDefault();
+      isLoading.value = false;
+
+      const record = {
+        walletType: walletType.value,
+        amount: amount.value,
+        userId: user.value.uid,
+      };
+
+      console.log({ record, walletId });
+
+      await updateRecord(walletId.value, record);
+
+      walletGetList();
+    }
+
+    watchEffect(() => {
+      if (walletType.value === "") {
+        isUpdate.value = false;
+      } else if (amount.value === 0) {
+        isUpdate.value = false;
+      }
+    });
+
     return {
       walletType,
+      walletId,
       amount,
       error,
+      isUpdate,
       wallets,
       total,
-      isPending,
-      handleSubmit,
+      isLoading,
+      setWallet,
+      handleUpdateWallet,
+      handleCreateWallet,
     };
   },
 };

@@ -37,7 +37,23 @@ function useCollection(name) {
     }
   }
 
-  return { error, isPending, addRecord, getRecords };
+  async function updateRecord(docId, record) {
+    error.value = null;
+
+    try {
+      const response = await projectFireStore
+        .collection(name)
+        .doc(docId)
+        .update(record);
+
+      return response;
+    } catch (err) {
+      console.log(err);
+      error.value = err.message;
+    }
+  }
+
+  return { error, isPending, addRecord, getRecords, updateRecord };
 }
 
 export default useCollection;
