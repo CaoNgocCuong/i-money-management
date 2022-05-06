@@ -240,8 +240,6 @@ export default {
     watchEffect(() => {
       if (walletType.value === "") {
         isUpdate.value = false;
-      } else if (amount.value === 0) {
-        isUpdate.value = false;
       }
     });
 

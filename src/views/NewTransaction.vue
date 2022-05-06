@@ -94,9 +94,23 @@
                   ><i class="t2ico t2ico-wallet text-2xl"></i
                 ></span>
               </div>
-              <div class="flex-1 py-2">
-                <div class="text-dark w-full">My wallet</div>
-              </div>
+              <select
+                id="walletType"
+                v-model="walletType"
+                @change="handleUpdateWallet"
+                v-if="wallets"
+                class="text-dark text-lg w-full outline-none"
+              >
+                <option value="" disabled>Choose a wallet type</option>
+                <option
+                  v-for="wl in wallets"
+                  :key="wl.id"
+                  :value="wl.walletType"
+                  :data-id="wl.id"
+                >
+                  {{ wl.walletType }}
+                </option>
+              </select>
             </label>
           </div>
         </div>
@@ -186,56 +200,74 @@
         <div class="text-red text-center py-3">{{ errorFile }}</div>
       </div>
     </template>
+    <div
+      v-if="errorCreateTransaction"
+      class="error w-full text-center text-red font-semibold p-3"
+    >
+      {{ errorCreateTransaction }}
+    </div>
     <div class="w-full my-10 text-center">
+      <Loading v-if="isLoading && !errorCreateTransaction" />
       <button
-        v-if="!isPending"
+        v-else
         type="submit"
         class="w-32 h-auto text-white p-2 bg-sky-400 rounded-lg text-xl"
       >
         <i class="t2ico t2ico-plus text-3xl"></i>
       </button>
-      <button
-        v-else
-        type="submit"
-        class="w-32 h-auto text-white p-4 bg-gray-500 rounded-lg text-xl cursor-not-allowed"
-      >
-        Loading...
-      </button>
     </div>
   </form>
 </template>
 <script>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 
 import { useUser } from "@/composables/useUser";
 import useCollection from "@/composables/useCollection";
 import useStorage from "@/composables/useStorage";
 import DatePicker from "vue3-datepicker";
+import Loading from "@/components/Loading.vue";
 
 export default {
   name: "New Transaction",
   components: {
     DatePicker,
+    Loading,
   },
   setup() {
     const { getUser } = useUser();
     const { error, isPending, addRecord } = useCollection("transactions");
     const { getRecords } = useCollection("categories");
+    const {
+      getRecords: getWalletList,
+      getRecordById,
+      updateRecord,
+    } = useCollection("wallets");
     const { url, uploadFile } = useStorage("transactions");
 
     const isMoreDetails = ref(false);
     const total = ref(0);
     const category = ref("");
     const categories = ref([]);
+    const walletId = ref("");
+    const walletType = ref("");
+    const wallet = reactive({
+      amount: null,
+      userId: "",
+      walletType: "",
+    });
+    const wallets = ref([]);
     const note = ref("");
     const location = ref("");
     const person = ref("");
     const file = ref(null);
     const errorFile = ref(null);
     const date = ref(new Date());
+    const isLoading = ref(false);
+    const errorCreateTransaction = ref(null);
 
     async function getCategories() {
       categories.value = await getRecords();
+      wallets.value = await getWalletList();
     }
 
     getCategories();
@@ -261,23 +293,58 @@ export default {
       person.value = "";
     }
 
+    async function handleUpdateWallet(event) {
+      walletId.value = event.target.selectedOptions[0].dataset.id;
+
+      const data = await getRecordById(walletId.value);
+
+      wallet.amount = data.amount;
+      wallet.userId = data.userId;
+      wallet.walletType = data.walletType;
+    }
+
     async function onSubmit() {
+      isLoading.value = true;
+      errorCreateTransaction.value = null;
+
       const { user } = getUser();
 
-      if (file.value) await uploadFile(file.value);
+      if (user.value.uid === wallet.userId) {
+        try {
+          if (wallet.amount - parseInt(total.value) < 0)
+            throw new Error(
+              "Invalid Transaction. You are not enough money to create this transaction. Please check your wallet."
+            );
 
-      const transaction = {
-        total: parseInt(total.value),
-        cateId: category.value,
-        note: note.value,
-        time: date.value,
-        location: location.value,
-        person: person.value,
-        image: url.value,
-        userId: user.value.uid,
-      };
+          if (file.value) await uploadFile(file.value);
 
-      await addRecord(transaction);
+          const newAmount = wallet.amount - parseInt(total.value);
+          wallet.amount = newAmount;
+
+          await updateRecord(walletId.value, wallet);
+
+          const transaction = {
+            total: parseInt(total.value),
+            cateId: category.value,
+            note: note.value,
+            time: date.value,
+            location: location.value,
+            wallet: walletType.value,
+            person: person.value,
+            image: url.value,
+            userId: user.value.uid,
+          };
+
+          await addRecord(transaction);
+        } catch (err) {
+          console.log(err);
+          errorCreateTransaction.value = err.message;
+
+          return;
+        } finally {
+          isLoading.value = false;
+        }
+      }
 
       resetForm();
     }
@@ -290,10 +357,16 @@ export default {
       date,
       location,
       person,
+      isLoading,
+      walletId,
+      walletType,
+      wallets,
       errorFile,
       isMoreDetails,
       error,
+      errorCreateTransaction,
       isPending,
+      handleUpdateWallet,
       onChangeFile,
       onSubmit,
     };

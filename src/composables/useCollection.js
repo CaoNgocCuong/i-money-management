@@ -37,6 +37,19 @@ function useCollection(name) {
     }
   }
 
+  async function getRecordById(docId) {
+    error.value = null;
+    try {
+      const snapShot = await projectFireStore.collection(name).doc(docId).get();
+      const data = { ...snapShot.data(), id: snapShot.id };
+
+      return data;
+    } catch (err) {
+      console.log(err);
+      error.value = err.message;
+    }
+  }
+
   async function updateRecord(docId, record) {
     error.value = null;
 
@@ -53,7 +66,14 @@ function useCollection(name) {
     }
   }
 
-  return { error, isPending, addRecord, getRecords, updateRecord };
+  return {
+    error,
+    isPending,
+    addRecord,
+    getRecords,
+    getRecordById,
+    updateRecord,
+  };
 }
 
 export default useCollection;
