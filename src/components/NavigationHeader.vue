@@ -11,7 +11,7 @@
               :src="user.photoURL"
               alt="User's profile avatar"
               size="sm"
-              class="w-full h-auto object-cover"
+              class="w-full h-full object-cover"
             />
           </div>
           <h1 class="font-bold text-xl ml-2 text-dark">

@@ -38,7 +38,7 @@
                   id="category"
                   class="text-lg text-dark w-full outline-none"
                   v-model="category"
-                  v-if="categories"
+                  v-if="categories.length !== 0"
                 >
                   <option value="" disabled>Choose a category</option>
                   <option
@@ -98,7 +98,7 @@
                 id="walletType"
                 v-model="walletType"
                 @change="handleUpdateWallet"
-                v-if="wallets"
+                v-if="wallets.length !== 0"
                 class="text-dark text-lg w-full outline-none"
               >
                 <option value="" disabled>Choose a wallet type</option>
@@ -220,6 +220,7 @@
 </template>
 <script>
 import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 
 import { useUser } from "@/composables/useUser";
 import useCollection from "@/composables/useCollection";
@@ -235,6 +236,10 @@ export default {
   },
   setup() {
     const { getUser } = useUser();
+    const { user } = getUser();
+
+    const router = useRouter();
+
     const { error, isPending, addRecord } = useCollection("transactions");
     const { getRecords } = useCollection("categories");
     const {
@@ -265,12 +270,50 @@ export default {
     const isLoading = ref(false);
     const errorCreateTransaction = ref(null);
 
-    async function getCategories() {
-      categories.value = await getRecords();
-      wallets.value = await getWalletList();
+    async function getCategoriesAndWallets() {
+      isLoading.value = true;
+
+      const categoriesSnapShot = await getRecords();
+      const walletsSnapShot = await getWalletList();
+
+      walletsSnapShot.forEach((wallet) => {
+        if (user.value.uid === wallet.userId) {
+          wallets.value.push(wallet);
+        }
+      });
+
+      categoriesSnapShot.forEach((cate) => {
+        if (user.value.uid === cate.userId) {
+          categories.value.push(cate);
+        }
+      });
+
+      if (wallets.value.length === 0) {
+        if (
+          confirm(
+            "You don't have any wallet type. Please add a new wallet type before creating a new transaction!!!"
+          )
+        ) {
+          router.push({ name: "Budget", params: {} });
+        } else {
+          router.push({ name: "Home", params: {} });
+        }
+      } else if (categories.value.length === 0) {
+        if (
+          confirm(
+            "You don't have any category. Please add a new category before creating a new transaction!!!"
+          )
+        ) {
+          router.push({ name: "Categories", params: {} });
+        } else {
+          router.push({ name: "Home", params: {} });
+        }
+      }
+
+      isLoading.value = false;
     }
 
-    getCategories();
+    getCategoriesAndWallets();
 
     function onChangeFile(event) {
       const selected = event.target.files[0];
@@ -306,8 +349,6 @@ export default {
     async function onSubmit() {
       isLoading.value = true;
       errorCreateTransaction.value = null;
-
-      const { user } = getUser();
 
       if (user.value.uid === wallet.userId) {
         try {

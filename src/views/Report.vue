@@ -25,7 +25,7 @@
       </div>
       <div class="transactions-wrap mt-4 max-h-[525px] overflow-y-auto">
         <div
-          v-if="!transactionsFiltered"
+          v-if="transactionsFiltered.length === 0"
           class="transactions-wrap mt-2 max-h-[300px] overflow-y-auto"
         >
           <h3

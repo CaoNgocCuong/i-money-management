@@ -83,7 +83,7 @@
     </div>
 
     <!-- Start: Form Add/Edit Wallet -->
-    <form class="min-h-[400px] mb-28">
+    <form class="min-h-[400px] mb-40">
       <div class="row">
         <h3 class="mt-4 p-4 font-semibold text-xl text-primary text-center">
           Actions Budget
@@ -120,14 +120,14 @@
       <div class="row">
         <button
           v-if="!isUpdate"
-          @click="handleCreateWallet"
+          @click.prevent="handleCreateWallet"
           class="flex items-center justify-center w-full mt-2 p-3 bg-primary text-lg text-white font-bold rounded-lg hover:opacity-90"
         >
           <i class="t2ico t2ico-plus mr-1 text-2xl"></i> Create
         </button>
         <button
           v-else
-          @click="handleUpdateWallet"
+          @click.prevent="handleUpdateWallet"
           class="flex items-center justify-center w-full mt-2 p-3 leading-8 bg-primary text-lg text-white font-bold rounded-lg hover:opacity-90"
         >
           <svg
@@ -229,8 +229,6 @@ export default {
         amount: amount.value,
         userId: user.value.uid,
       };
-
-      console.log({ record, walletId });
 
       await updateRecord(walletId.value, record);
 

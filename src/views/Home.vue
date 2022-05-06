@@ -23,7 +23,7 @@
             d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
           />
         </svg>
-        {{ $filter.formatNumber(total) }}
+        {{ total ? $filter.formatNumber(total) : $filter.formatNumber(0) }}
       </h2>
     </div>
     <section>
@@ -33,7 +33,7 @@
       <div class="transaction-today">
         <h5 class="text-gray-400 text-lg font-semibold">Today</h5>
         <div
-          v-if="!transactionsToday"
+          v-if="transactionsToday.length === 0"
           class="transactions-wrap mt-2 max-h-[300px] overflow-y-auto"
         >
           <h3
@@ -125,7 +125,7 @@
       <div class="transaction-yesterday mt-4 mb-32">
         <h5 class="text-gray-400 text-lg font-semibold">Yesterday</h5>
         <div
-          v-if="!transactionsYesterday"
+          v-if="transactionsYesterday.length === 0"
           class="transactions-wrap mt-2 max-h-[300px] overflow-y-auto"
         >
           <h3
@@ -238,17 +238,13 @@ export default {
     const transactionsYesterday = ref([]);
 
     async function getTotalWallets() {
-      const data = await getRecords();
+      const dataSnapShot = await getRecords();
 
-      const intitalValue = 0;
-
-      const result = data.reduce((previous, current) => {
-        if (user.value.uid === current.userId) {
-          return previous + current.amount;
+      dataSnapShot.filter((wallet) => {
+        if (user.value.uid === wallet.userId) {
+          total.value += wallet.amount;
         }
-      }, intitalValue);
-
-      total.value = result;
+      });
     }
     getTotalWallets();
 

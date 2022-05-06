@@ -5,7 +5,7 @@
       <div class="text-center">
         <div class="w-24 h-24 rounded-full overflow-hidden mx-auto shadow-lg">
           <img
-            class="w-full h-auto object-cover"
+            class="w-full h-full object-cover"
             :src="user.photoURL"
             size="xs"
             alt="User's Profile Avatar"

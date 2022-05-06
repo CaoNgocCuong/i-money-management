@@ -57,6 +57,7 @@
 import { ref, watchEffect } from "vue";
 
 import useCollection from "@/composables/useCollection";
+import { useUser } from "@/composables/useUser";
 import Loading from "@/components/Loading.vue";
 
 export default {
@@ -67,6 +68,9 @@ export default {
   setup() {
     const { error, isPending, addRecord, getRecords, updateRecord } =
       useCollection("categories");
+
+    const { getUser } = useUser();
+    const { user } = getUser();
 
     const isLoading = ref(true);
     const isUpdateCate = ref(null);
@@ -93,6 +97,7 @@ export default {
 
       await addRecord({
         name: title.value,
+        userId: user.value.uid,
       });
 
       getCategories();
