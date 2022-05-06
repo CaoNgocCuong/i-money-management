@@ -329,7 +329,7 @@ export default {
             note: note.value,
             time: date.value,
             location: location.value,
-            wallet: walletType.value,
+            walletType: walletType.value,
             person: person.value,
             image: url.value,
             userId: user.value.uid,
