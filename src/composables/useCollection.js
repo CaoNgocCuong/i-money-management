@@ -22,6 +22,7 @@ function useCollection(name) {
 
   async function getRecords() {
     error.value = null;
+    isPending.value = true;
 
     try {
       const response = await projectFireStore.collection(name).get();
@@ -34,6 +35,8 @@ function useCollection(name) {
     } catch (err) {
       console.log(err);
       error.value = err.message;
+    } finally {
+      isPending.value = false;
     }
   }
 
