@@ -25,6 +25,37 @@
       </div>
       <div class="transactions-wrap mt-4 max-h-[525px] overflow-y-auto">
         <div
+          v-if="!transactionsFiltered"
+          class="transactions-wrap mt-2 max-h-[300px] overflow-y-auto"
+        >
+          <h3
+            class="bg-white p-8 text-center font-semibold text-red rounded-lg"
+          >
+            <router-link
+              :to="{ name: 'NewTransaction', params: {} }"
+              class="flex items-center justify-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-8 w-8 mr-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              There are no transactions here. <br />
+              Let's add a new transaction.
+            </router-link>
+          </h3>
+        </div>
+        <div
+          v-else
           v-for="transaction in transactionsFiltered"
           :key="transaction.id"
           class="transaction relative flex items-center bg-white rounded-lg p-4 mb-3 shadow-md overflow-hidden cursor-pointer"

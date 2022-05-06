@@ -121,7 +121,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = `${to.meta.text} | I-Money`;
+  document.title = `${to.meta.text || "Home"} | I-Money`;
   next();
 });
 
