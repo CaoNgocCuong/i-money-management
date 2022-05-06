@@ -69,6 +69,22 @@ function useCollection(name) {
     }
   }
 
+  async function deleteRecordById(docId) {
+    error.value = null;
+
+    try {
+      const response = await projectFireStore
+        .collection(name)
+        .doc(docId)
+        .delete();
+
+      return response;
+    } catch (err) {
+      console.log(err);
+      error.value = err.message;
+    }
+  }
+
   return {
     error,
     isPending,
@@ -76,6 +92,7 @@ function useCollection(name) {
     getRecords,
     getRecordById,
     updateRecord,
+    deleteRecordById,
   };
 }
 

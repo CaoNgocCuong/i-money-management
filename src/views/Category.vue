@@ -1,16 +1,42 @@
 <template>
   <div class="container mx-auto px-8">
-    <ul v-if="categories" class="cate-list max-h-[450px] overflow-y-auto">
+    <ul class="cate-list max-h-[450px] overflow-y-auto">
+      <li v-if="categories.length === 0">
+        <div class="transactions-wrap mt-2">
+          <h3
+            class="flex items-center justify-center bg-white p-6 text-center font-semibold text-red rounded-lg cursor-not-allowed"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            No categories available here.
+          </h3>
+        </div>
+      </li>
       <li
+        v-else
         v-for="cate in categories"
         :key="cate.id"
-        @click="handleSetCate(cate)"
-        class="flex items-center p-4 bg-white rounded-lg mb-5 shadow-md cursor-pointer"
+        @click="handleSetCate($event, cate)"
+        class="category flex items-center p-4 bg-white rounded-lg mb-5 shadow-md cursor-pointer"
       >
         <div
-          class="cate-icon-circle w-8 h-8 rounded-full bg-slate-500 mr-4"
+          class="cate-icon-circle w-8 h-8 rounded-full bg-slate-500 mr-4 pointer-events-none"
         ></div>
-        <div class="text-lg font-bold text-dark">{{ cate.name }}</div>
+        <div class="text-lg font-bold text-dark pointer-events-none">
+          {{ cate.name }}
+        </div>
       </li>
     </ul>
     <form class="mt-4">
@@ -50,6 +76,32 @@
           Update category
         </button>
       </div>
+      <div class="row rounded-lg mt-4 p-3 bg-white">
+        <button
+          @click.prevent="handleDeleteCategory"
+          class="flex items-center w-full text-red font-semibold text-lg cursor-pointer"
+        >
+          <div
+            class="flex items-center justify-center w-8 h-8 bg-red text-white p-2 rounded-full mr-4"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </div>
+          Delete category
+        </button>
+      </div>
     </form>
   </div>
 </template>
@@ -66,8 +118,14 @@ export default {
     Loading,
   },
   setup() {
-    const { error, isPending, addRecord, getRecords, updateRecord } =
-      useCollection("categories");
+    const {
+      error,
+      isPending,
+      addRecord,
+      getRecords,
+      updateRecord,
+      deleteRecordById,
+    } = useCollection("categories");
 
     const { getUser } = useUser();
     const { user } = getUser();
@@ -78,14 +136,35 @@ export default {
     const cateId = ref("");
     const categories = ref([]);
 
-    function handleSetCate(cate) {
+    function handleSetCate(event, cate) {
+      const categoriesEle = document.querySelectorAll(".cate-list .category");
+
+      categoriesEle.forEach((cate) => {
+        cate.classList.remove("active");
+      });
+
+      event.target.classList.add("active");
+
       cateId.value = cate.id;
       title.value = cate.name;
       isUpdateCate.value = true;
     }
 
+    function reset() {
+      title.value = "";
+      isUpdateCate.value = false;
+    }
+
     async function getCategories() {
-      categories.value = await getRecords();
+      categories.value = [];
+
+      const dataSnapShot = await getRecords();
+
+      dataSnapShot.forEach((cate) => {
+        if (cate.userId === user.value.uid) {
+          categories.value.push(cate);
+        }
+      });
 
       isLoading.value = false;
     }
@@ -121,9 +200,16 @@ export default {
       isLoading.value = false;
     }
 
-    function reset() {
-      title.value = "";
-      isUpdateCate.value = false;
+    async function handleDeleteCategory() {
+      isLoading.value = true;
+
+      await deleteRecordById(cateId.value);
+
+      getCategories();
+
+      reset();
+
+      isLoading.value = false;
     }
 
     watchEffect(() => {
@@ -142,6 +228,7 @@ export default {
       handleSetCate,
       handleCreateCategory,
       handleUpdateCategory,
+      handleDeleteCategory,
     };
   },
 };
@@ -150,6 +237,10 @@ export default {
 <style scoped>
 ul.cate-list li:nth-child(3n) .cate-icon-circle {
   background-color: aqua;
+}
+
+ul.cate-list .category.active {
+  @apply bg-gray-400;
 }
 
 ul.cate-list li:nth-child(3n + 1) .cate-icon-circle {
