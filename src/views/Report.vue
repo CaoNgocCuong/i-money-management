@@ -29,7 +29,7 @@
           class="transactions-wrap mt-2 max-h-[300px] overflow-y-auto"
         >
           <h3
-            class="bg-white p-8 text-center font-semibold text-red rounded-lg"
+            class="bg-white p-8 text-center text-sm font-semibold text-red rounded-lg"
           >
             <router-link
               :to="{ name: 'NewTransaction', params: {} }"
@@ -37,7 +37,7 @@
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-8 w-8 mr-4"
+                class="h-6 w-6 mr-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -213,7 +213,7 @@ export default {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
-  max-width: 140px;
+  max-width: 120px;
   overflow: hidden;
   line-height: 24px;
   height: 24px;

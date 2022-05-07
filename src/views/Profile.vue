@@ -1,7 +1,7 @@
 <template>
-  <!-- Start: Info -->
-  <div class="row" v-if="user">
-    <div class="container mx-auto p-8">
+  <div class="container mx-auto px-8">
+    <!-- Start: Info -->
+    <div class="row" v-if="user">
       <div class="text-center">
         <div class="w-24 h-24 rounded-full overflow-hidden mx-auto shadow-lg">
           <img
@@ -17,17 +17,15 @@
         <p class="font-semibold text-gray-400 mt-1">{{ user.email }}</p>
       </div>
     </div>
-  </div>
 
-  <!-- Start: Menu -->
-  <div class="row">
-    <div class="container mx-auto px-8">
+    <!-- Start: Menu -->
+    <div class="row">
       <div class="grid grid-cols-1">
         <div class="col-span-1">
-          <h3 class="font-bold text-primary text-xl mb-2">General</h3>
+          <h3 class="font-bold text-primary text-xl mb-2 mt-4">General</h3>
         </div>
         <div class="col-span-1">
-          <ul class="list-routes">
+          <ul class="list-routes mb-24">
             <li
               v-for="(profileOption, index) in profileOptions"
               :key="profileOption.name"
