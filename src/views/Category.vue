@@ -181,6 +181,8 @@ export default {
 
       getCategories();
 
+      reset();
+
       isLoading.value = false;
     }
 

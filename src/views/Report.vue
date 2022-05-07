@@ -141,7 +141,13 @@ export default {
     const isLoading = ref(true);
 
     async function getTransactions() {
-      transactions.value = await getRecordsTransaction();
+      const transactionsSnapShot = await getRecordsTransaction();
+
+      transactionsSnapShot.forEach((transaction) => {
+        if (user.value.uid === transaction.userId) {
+          transactions.value.push(transaction);
+        }
+      });
 
       isLoading.value = false;
     }
@@ -157,7 +163,15 @@ export default {
     });
 
     async function getCategories() {
-      categories.value = await getRecords();
+      const categoriesSnapShot = await getRecords();
+
+      categoriesSnapShot.forEach((cate) => {
+        if (cate.userId === user.value.uid) {
+          categories.value.push(cate);
+        }
+      });
+
+      isLoading.value = false;
     }
 
     getCategories();
