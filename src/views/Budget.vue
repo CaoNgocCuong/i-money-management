@@ -54,8 +54,8 @@
         <div
           v-for="(wallet, index) in wallets"
           :key="index"
-          @click="setWallet(wallet)"
-          class="flex items-center p-4 justify-between cursor-pointer hover:bg-slate-300"
+          @click="setWallet($event, wallet)"
+          class="wallet flex items-center p-4 justify-between cursor-pointer hover:bg-slate-300"
         >
           <div>{{ wallet.walletType }}</div>
           <div>{{ $filter.formatNumber(wallet.amount) }}</div>
@@ -150,7 +150,7 @@
       </div>
       <div class="row rounded-lg mt-4 p-3 bg-red">
         <button
-          @click.prevent="handleDeleteCategory"
+          @click.prevent="handleDeleteWallet"
           class="flex items-center justify-center w-full text-white font-semibold text-lg cursor-pointer"
         >
           <div
@@ -190,7 +190,7 @@ export default {
     Loading,
   },
   setup() {
-    const { error, addRecord, getRecords, updateRecord } =
+    const { error, addRecord, getRecords, updateRecord, deleteRecordById } =
       useCollection("wallets");
     const { getUser } = useUser();
     const { user } = getUser();
@@ -220,7 +220,19 @@ export default {
 
     walletGetList();
 
-    function setWallet(wallet) {
+    function setWallet(event, wallet) {
+      const walletsEle = document.querySelectorAll(
+        ".table-wallet .wallet.active"
+      );
+
+      if (walletsEle) {
+        walletsEle.forEach((wallet) => {
+          wallet.classList.remove("active");
+        });
+      }
+
+      event.target.classList.add("active");
+
       walletType.value = wallet.walletType;
       walletId.value = wallet.id;
       amount.value = wallet.amount;
@@ -259,6 +271,22 @@ export default {
       await updateRecord(walletId.value, record);
 
       walletGetList();
+
+      walletType.value = "";
+      amount.value = 0;
+    }
+
+    async function handleDeleteWallet() {
+      isLoading.value = true;
+
+      await deleteRecordById(walletId.value);
+
+      walletGetList();
+
+      walletType.value = "";
+      amount.value = 0;
+
+      isLoading.value = false;
     }
 
     watchEffect(() => {
@@ -279,8 +307,13 @@ export default {
       setWallet,
       handleUpdateWallet,
       handleCreateWallet,
+      handleDeleteWallet,
     };
   },
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.table-wallet .wallet.active {
+  background-color: rgb(203, 213, 225);
+}
+</style>

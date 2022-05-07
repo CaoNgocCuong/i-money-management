@@ -73,10 +73,15 @@
           >
             <div class="img h-10 w-10 overflow-hidden mr-4">
               <img
+                v-if="transaction.image"
                 class="w-full h-full object-cover rounded-full"
                 :src="transaction.image"
                 alt="transaction's image"
               />
+              <span
+                v-else
+                class="inline-block h-full w-full bg-slate-500 rounded-full"
+              ></span>
             </div>
             <div class="transaction-info flex-1">
               <div
@@ -165,10 +170,15 @@
           >
             <div class="img h-10 w-10 overflow-hidden mr-4">
               <img
+                v-if="transaction.image"
                 class="w-full h-full object-cover rounded-full"
                 :src="transaction.image"
                 alt="transaction's image"
               />
+              <span
+                v-else
+                class="inline-block h-full w-full bg-slate-500 rounded-full"
+              ></span>
             </div>
             <div class="transaction-info flex-1">
               <div
