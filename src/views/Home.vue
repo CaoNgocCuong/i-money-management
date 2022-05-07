@@ -248,6 +248,8 @@ export default {
     const transactionsYesterday = ref([]);
 
     async function getTotalWallets() {
+      total.value = 0;
+
       const dataSnapShot = await getRecords();
 
       dataSnapShot.filter((wallet) => {

@@ -25,7 +25,7 @@
           <h3 class="font-bold text-primary text-xl mb-2 mt-4">General</h3>
         </div>
         <div class="col-span-1">
-          <ul class="list-routes mb-24">
+          <ul class="list-routes mb-32">
             <li
               v-for="(profileOption, index) in profileOptions"
               :key="profileOption.name"

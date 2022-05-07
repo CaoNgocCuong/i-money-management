@@ -141,6 +141,8 @@ export default {
     const isLoading = ref(true);
 
     async function getTransactions() {
+      transactions.value = [];
+
       const transactionsSnapShot = await getRecordsTransaction();
 
       transactionsSnapShot.forEach((transaction) => {
@@ -163,6 +165,8 @@ export default {
     });
 
     async function getCategories() {
+      categories.value = [];
+
       const categoriesSnapShot = await getRecords();
 
       categoriesSnapShot.forEach((cate) => {
